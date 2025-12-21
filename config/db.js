@@ -5,10 +5,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
 });
 
 db.connect((err) => {
@@ -17,7 +19,6 @@ db.connect((err) => {
     return;
   }
   console.log('Connected to the MySQL database.');
-  console.log()
 });
 
 db.query("SHOW TABLES;", (err, results) => {
