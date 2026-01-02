@@ -18,4 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 
-export default app;
+app.listen(5000, () => {
+  console.log("Server running on http://localhost:5000");
+});
