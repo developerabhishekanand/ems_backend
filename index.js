@@ -7,10 +7,7 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 const app = express();
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://ems-nyrqbkkun-developerabhishekanands-projects.vercel.app/",
-    ],
+    origin: "*", // TEMPORARY for debugging
     credentials: true,
   })
 );
