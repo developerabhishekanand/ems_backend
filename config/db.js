@@ -12,7 +12,7 @@ const db = mysql.createConnection({
   waitForConnections: true,
   connectionLimit: 10,
   ssl: {
-    ca: fs.readFileSync(process.env.CA),
+    rejectUnauthorized: true,
   },
 });
 
