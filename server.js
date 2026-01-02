@@ -21,4 +21,4 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+export default app;
