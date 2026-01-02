@@ -3,17 +3,8 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../config/db.js";
-import cors from "cors";
 
 const router = express.Router();
-
-//github.com/developerabhishekanand/ems
-// Use the cors middleware
-https: router.use(
-  cors({
-    origin: "https://github.com/developerabhishekanand/ems", // Allow only your frontend URL
-  })
-);
 
 router.post("/register", async (req, res) => {
   try {
