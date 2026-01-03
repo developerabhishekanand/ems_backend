@@ -12,14 +12,13 @@ export const addExpense = async (req, res) => {
         .json({ message: "Unauthorized: No user ID found" });
     }
 
-    const sql = date
-      ? `INSERT INTO expenses (user_id, title, amount, category, date, created_at) VALUES (?, ?, ?, ?, ?, NOW())`
-      : `INSERT INTO expenses (user_id, title, amount, category, date, created_at) VALUES (?, ?, ?, ?, CURDATE(), NOW())`;
+    // Always provide values for all placeholders
+    const sql = `INSERT INTO expenses (user_id, title, amount, category, date, created_at) VALUES (?, ?, ?, ?, ?, NOW())`;
 
-    const params = date
-      ? [user_id, title, amount, category, date]
-      : [user_id, title, amount, category];
+    // If no date provided, use CURDATE()
+    const dateValue = date || new Date().toISOString().split("T")[0];
 
+    const params = [user_id, title, amount, category, dateValue];
     const pool = getPool();
     const [result] = await pool.promise().query(sql, params);
 
