@@ -28,9 +28,11 @@ router.post("/register", async (req, res) => {
       [name, email, hash]
     );
     const userId = result.insertId;
-    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET || "secret", {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: result.insertId },
+      process.env.JWT_SECRET || "secret",
+      { expiresIn: "1d" }
+    );
     res.status(201).json({ message: "User registered", token });
   } catch (err) {
     console.error("Register error:", err);
@@ -55,7 +57,14 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET || "secret",
       { expiresIn: "1d" }
     );
-    res.json({ token, user: users[0] });
+    res.json({
+      token,
+      user: {
+        id: users[0].id,
+        name: users[0].name,
+        email: users[0].email,
+      },
+    });
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
@@ -65,7 +74,8 @@ router.post("/login", async (req, res) => {
 // Public: list all registered users (omit passwords)
 router.get("/users", async (req, res) => {
   try {
-    const [users] = await db.promise().query("SELECT name, email FROM users");
+    const pool = getPool();
+    const [users] = await pool.query("SELECT name, email FROM users");
     res.json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
