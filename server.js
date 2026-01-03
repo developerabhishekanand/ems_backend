@@ -15,8 +15,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth", authRoutes);
-app.use("/api/expenses", expenseRoutes);
+app.use("/auth", authRoutes);
+app.use("/expenses", expenseRoutes);
 
 app.get("/", (req, res) => {
   res.send("EMS Backend is running");
