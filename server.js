@@ -18,4 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 
+app.get("/", (req, res) => {
+  res.send("EMS Backend is running");
+});
+
 export default app;
