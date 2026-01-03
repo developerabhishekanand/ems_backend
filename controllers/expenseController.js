@@ -14,12 +14,13 @@ export const addExpense = async (req, res) => {
 
     const sql = date
       ? `INSERT INTO expenses (user_id, title, amount, category, date) VALUES (?, ?, ?, ?, ?)`
-      : `INSERT INTO expenses (user_id, title, amount, category, date) VALUES (?, ?, ?, ?, CURRENT())`;
+      : `INSERT INTO expenses (user_id, title, amount, category, date) VALUES (?, ?, ?, ?, CURRENT_DATE())`;
 
     const params = date
       ? [user_id, title, amount, category, date]
-      : [user_id, title, amount, category];
-    const [result] = await db.promise().query(sql, params);
+      : [user_id, title, amount, category, null];
+    const pool = getPool();
+    const [result] = await pool.query(sql, params);
 
     return res
       .status(201)
