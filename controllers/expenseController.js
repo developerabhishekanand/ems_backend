@@ -21,7 +21,7 @@ export const addExpense = async (req, res) => {
       : [user_id, title, amount, category];
 
     const pool = getPool();
-    const [result] = await pool.query(sql, params);
+    const [result] = await pool.promise().query(sql, params);
 
     return res
       .status(201)
@@ -46,7 +46,7 @@ export const getMyExpenses = async (req, res) => {
     const query = "SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC";
     const pool = getPool();
 
-    const [rows] = await pool.query(query, [user_id]);
+    const [rows] = await pool.promise().query(query, [user_id]);
     return res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching user expenses:", error);
