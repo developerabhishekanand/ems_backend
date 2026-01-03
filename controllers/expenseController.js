@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import { getPool } from "../config/db.js";
 
 // Controller to add a new expense
 export const addExpense = async (req, res) => {
@@ -42,8 +42,9 @@ export const getMyExpenses = async (req, res) => {
 
     // ensure we order by the `date` column (table uses `date`)
     const query = "SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC";
+    const pool = getPool();
 
-    const [rows] = await db.promise().query(query, [user_id]);
+    const [rows] = await pool.query(query, [user_id]);
     return res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching user expenses:", error);
@@ -59,7 +60,9 @@ export const getAllExpenses = async (req, res) => {
   JOIN users u ON u.id = e.user_id
   ORDER BY e.date DESC
   `;
-    const [rows] = await db.promise().query(query);
+
+    const pool = getPool();
+    const [rows] = await pool.query(query);
     return res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching all expenses:", error);
@@ -78,7 +81,9 @@ export const getMonthlyExpenses = (req, res) => {
     WHERE user_id = ? AND YEAR(date) = ? AND MONTH(date) = ?
   `;
 
-  db.query(query, [userId, year, month], (err, results) => {
+  const pool = getPool();
+
+  pool.query(query, [userId, year, month], (err, results) => {
     if (err) {
       console.error("Error fetching monthly expenses:", err);
       return res.status(500).json({ error: "Database error" });
@@ -92,9 +97,10 @@ export const deleteExpense = (req, res) => {
   const expenseId = req.params.id;
 
   const query = "DELETE FROM expenses WHERE id = ?";
+  const pool = getPool();
 
   // Ensure the requester owns the expense
-  db.query(
+  pool.query(
     "SELECT user_id FROM expenses WHERE id = ?",
     [expenseId],
     (err, rows) => {
@@ -128,8 +134,9 @@ export const updateExpense = (req, res) => {
   const query =
     "UPDATE expenses SET title = ?, amount = ?, category = ?, date = ? WHERE id = ?";
 
+  const pool = getPool();
   // Ensure the requester owns the expense
-  db.query(
+  pool.query(
     "SELECT user_id FROM expenses WHERE id = ?",
     [expenseId],
     (err, rows) => {
@@ -145,7 +152,7 @@ export const updateExpense = (req, res) => {
       if (ownerId !== requesterId)
         return res.status(403).json({ message: "Forbidden" });
 
-      db.query(
+      pool.query(
         query,
         [title, amount, category, date, expenseId],
         (err2, result) => {
