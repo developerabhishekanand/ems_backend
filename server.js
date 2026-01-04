@@ -7,7 +7,7 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 const app = express();
 const allowedOrigins = [
   "http://localhost:3000", // local frontend
-  "https://your-frontend-vercel-url.vercel.app", // deployed frontend
+  "https://ems-five-sigma.vercel.app", // deployed frontend
 ];
 
 app.use(

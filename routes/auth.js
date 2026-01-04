@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
     );
     res.status(201).json({ message: "User registered", token });
   } catch (err) {
-    console.error("Register error:", err);
+    console.log("Register error:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Login error:", err);
+    console.log("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -82,7 +82,7 @@ router.get("/users", async (req, res) => {
     const [users] = await pool.query("SELECT name, email FROM users");
     res.json(users);
   } catch (err) {
-    console.error("Error fetching users:", err);
+    console.log("Error fetching users:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });

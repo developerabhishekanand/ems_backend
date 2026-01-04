@@ -36,7 +36,7 @@ export const addExpense = async (req, res) => {
       id: result.insertId,
     });
   } catch (error) {
-    console.error("Error adding expense:", error);
+    console.log("Error adding expense:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -52,7 +52,7 @@ export const getMyExpenses = async (req, res) => {
 
     res.status(200).json(rows);
   } catch (error) {
-    console.error("Error fetching user expenses:", error);
+    console.log("Error fetching user expenses:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -70,7 +70,7 @@ export const getAllExpenses = async (req, res) => {
     const [rows] = await pool.query(query);
     return res.status(200).json(rows);
   } catch (error) {
-    console.error("Error fetching all expenses:", error);
+    console.log("Error fetching all expenses:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -90,7 +90,7 @@ export const getMonthlyExpenses = (req, res) => {
 
   pool.query(query, [userId, year, month], (err, results) => {
     if (err) {
-      console.error("Error fetching monthly expenses:", err);
+      console.log("Error fetching monthly expenses:", err);
       return res.status(500).json({ error: "Database error" });
     }
     res.status(200).json(results[0]);
@@ -123,7 +123,7 @@ export const deleteExpense = async (req, res) => {
 
     res.status(200).json({ message: "Expense deleted" });
   } catch (error) {
-    console.error("Error deleting expense:", error);
+    console.log("Error deleting expense:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -142,7 +142,7 @@ export const updateExpense = (req, res) => {
     [expenseId],
     (err, rows) => {
       if (err) {
-        console.error("Error checking expense owner:", err);
+        console.log("Error checking expense owner:", err);
         return res.status(500).json({ error: "Database error" });
       }
 
@@ -158,7 +158,7 @@ export const updateExpense = (req, res) => {
         [title, amount, category, date, expenseId],
         (err2, result) => {
           if (err2) {
-            console.error("Error updating expense:", err2);
+            console.log("Error updating expense:", err2);
             return res.status(500).json({ error: "Database error" });
           }
           res.status(200).json({ message: "Expense updated" });

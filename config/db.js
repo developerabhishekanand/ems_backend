@@ -37,7 +37,7 @@ export function getPool() {
 
 // db.connect((err) => {
 //   if (err) {
-//     console.error("Error connecting to the database:", err);
+//     console.log("Error connecting to the database:", err);
 //     return;
 //   }
 //   console.log("Connected to the MySQL database.");
@@ -45,7 +45,7 @@ export function getPool() {
 
 // db.query("SHOW TABLES;", (err, results) => {
 //   if (err) {
-//     console.error("Error fetching tables:", err);
+//     console.log("Error fetching tables:", err);
 //     return;
 //   }
 //   console.log("Tables in the database:", results);
