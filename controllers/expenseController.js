@@ -7,25 +7,33 @@ export const addExpense = async (req, res) => {
     const userId = req.user?.id;
     console.log("REQ.USER:", req.user);
 
+    if (!title || !amount || !category || !date) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
     if (!userId) {
       return res
         .status(401)
         .json({ message: "Unauthorized: No user ID found" });
     }
 
+    // 3️⃣ Validate date format YYYY-MM-DD
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
+
     // Always provide values for all placeholders
-    const sql = `INSERT INTO expenses (user_id, title, amount, category, date, created_at) VALUES (?, ?, ?, ?, ?, NOW())`;
+    // 4️⃣ Prepare SQL
+    const sql =
+      "INSERT INTO expenses (user_id, title, amount, category, date, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+    const params = [userId, title, amount, category, date];
 
-    // If no date provided, use CURDATE()
-    const dateValue = date || new Date().toISOString().split("T")[0];
-
-    const params = [userId, title, amount, category, dateValue];
     const pool = getPool();
-    const [result] = await pool.promise().query(sql, params);
-
-    return res
-      .status(201)
-      .json({ message: "Expense added", id: result.insertId });
+    const [result] = await pool.query(sql, params); // ✅ no .promise()
+    return res.status(201).json({
+      message: "Expense added successfully",
+      id: result.insertId,
+    });
   } catch (error) {
     console.error("Error adding expense:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -35,19 +43,13 @@ export const addExpense = async (req, res) => {
 // Fetch all expenses for logged-in user
 export const getMyExpenses = async (req, res) => {
   try {
-    const user_id = req.user.id; // Assuming user ID is stored in req.user
-    if (!user_id) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized: No user ID found" });
-    }
-
-    // ensure we order by the `date` column (table uses `date`)
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const query = "SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC";
     const pool = getPool();
+    const [rows] = await pool.query(query, [userId]); // ✅ no .promise()
 
-    const [rows] = await pool.promise().query(query, [user_id]);
-    return res.status(200).json(rows);
+    res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching user expenses:", error);
     return res.status(500).json({ message: "Internal server error" });
