@@ -15,10 +15,9 @@ export function getPool() {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { ca: process.env.CA } // use PEM from environment
-          : false,
+      ssl: process.env.CA
+        ? { ca: process.env.CA } // PEM string from env
+        : { rejectUnauthorized: false },
     });
   }
   return pool;
