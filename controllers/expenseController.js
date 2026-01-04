@@ -98,38 +98,34 @@ export const getMonthlyExpenses = (req, res) => {
 };
 
 //delete an expense
-export const deleteExpense = (req, res) => {
+export const deleteExpense = async (req, res) => {
   const expenseId = req.params.id;
+  const requesterId = req.user?.id;
 
-  const query = "DELETE FROM expenses WHERE id = ?";
-  const pool = getPool();
+  if (!requesterId) return res.status(401).json({ message: "Unauthorized" });
 
-  // Ensure the requester owns the expense
-  pool.query(
-    "SELECT user_id FROM expenses WHERE id = ?",
-    [expenseId],
-    (err, rows) => {
-      if (err) {
-        console.error("Error checking expense owner:", err);
-        return res.status(500).json({ error: "Database error" });
-      }
+  try {
+    const pool = getPool();
+    // Check if expense exists and belongs to the user
+    const [rows] = await pool.query(
+      "SELECT user_id FROM expenses WHERE id = ?",
+      [expenseId]
+    );
+    if (!rows.length)
+      return res.status(404).json({ message: "Expense not found" });
 
-      if (!rows.length)
-        return res.status(404).json({ message: "Expense not found" });
-      const ownerId = rows[0].user_id;
-      const requesterId = req.user?.id;
-      if (ownerId !== requesterId)
-        return res.status(403).json({ message: "Forbidden" });
+    const ownerId = rows[0].user_id;
+    if (ownerId !== requesterId)
+      return res.status(403).json({ message: "Forbidden" });
 
-      db.query(query, [expenseId], (err2, result) => {
-        if (err2) {
-          console.error("Error deleting expense:", err2);
-          return res.status(500).json({ error: "Database error" });
-        }
-        res.status(200).json({ message: "Expense deleted" });
-      });
-    }
-  );
+    // Delete the expense
+    await pool.query("DELETE FROM expenses WHERE id = ?", [expenseId]);
+
+    res.status(200).json({ message: "Expense deleted" });
+  } catch (error) {
+    console.error("Error deleting expense:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 //update an expense
