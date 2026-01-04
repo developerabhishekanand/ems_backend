@@ -29,6 +29,7 @@ export const addExpense = async (req, res) => {
     const params = [userId, title, amount, category, date];
 
     const pool = getPool();
+
     const [result] = await pool.query(sql, params); // ✅ no .promise()
     return res.status(201).json({
       message: "Expense added successfully",
