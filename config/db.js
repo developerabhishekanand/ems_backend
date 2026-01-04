@@ -17,7 +17,7 @@ export function getPool() {
       queueLimit: 0,
       ssl:
         process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false } // or use { ca: process.env.DB_CA } for secure
+          ? { ca: process.env.CA } // use PEM from environment
           : false,
     });
   }
