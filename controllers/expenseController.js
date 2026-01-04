@@ -4,9 +4,10 @@ import { getPool } from "../config/db.js";
 export const addExpense = async (req, res) => {
   try {
     const { title, amount, category, date } = req.body;
-    const user_id = req.user?.id;
+    const userId = req.user?.id;
+    console.log("REQ.USER:", req.user);
 
-    if (!user_id) {
+    if (!userId) {
       return res
         .status(401)
         .json({ message: "Unauthorized: No user ID found" });
@@ -18,7 +19,7 @@ export const addExpense = async (req, res) => {
     // If no date provided, use CURDATE()
     const dateValue = date || new Date().toISOString().split("T")[0];
 
-    const params = [user_id, title, amount, category, dateValue];
+    const params = [userId, title, amount, category, dateValue];
     const pool = getPool();
     const [result] = await pool.promise().query(sql, params);
 
